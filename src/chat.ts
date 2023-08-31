@@ -1,6 +1,7 @@
 import { Message, User } from "@prisma/client";
 import { client } from "./prisma";
 import Websocket from "ws";
+import axios from "axios";
 
 interface Payload {
   event: "chat.message.new";
@@ -8,6 +9,11 @@ interface Payload {
     messages: Message[];
     users: User[];
   };
+}
+
+const resetTimeout = async () => {
+  console.log("resetting timeout");
+  await axios.post("/chat/ack");
 }
 
 export const connect = async () => {
@@ -19,6 +25,8 @@ export const connect = async () => {
       Authorization: `Bearer ${tokens.access_token}`,
     },
   });
+
+  setInterval(resetTimeout, 30_000);
 
   ws.on("open", () => {
     ws.send(JSON.stringify({ event: "chat.start" }));
@@ -51,7 +59,7 @@ const onMessage = async (buffer: Websocket.RawData) => {
 
   let print = '';
   for (let message of trMessages) {
-    print += `${message.sender_id} ${message.content}`;
+    print += `message: ${message.sender_id} ${message.content}`;
   }
 
   console.log(print);

@@ -26,8 +26,8 @@ const main = async () => {
     }
   }
   
-  await start();
-  await connect();
+  start();
+  connect();
 }
 
 main();
