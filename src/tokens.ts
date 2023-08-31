@@ -1,11 +1,43 @@
 import { client } from "./prisma";
 import axios from "axios";
 
+import { createInterface } from "readline/promises";
+const readline = createInterface({
+  input: process.stdin,
+  output: process.stdout
+})
+
 interface Tokens {
   token_type: "Bearer";
   expires_in: number;
   access_token: string;
   refresh_token: string;
+}
+
+export const getAuthUrl = () => {
+  const url = new URL('https://osu.ppy.sh/oauth/authorize');
+  const params = new URLSearchParams({
+    client_id: process.env.CLIENT_ID,
+    redirect_uri: process.env.REDIRECT_URI,
+    response_type: "code",
+    scope: "chat.read"
+  });
+
+  url.search = params.toString();
+  return url.toString();
+}
+
+export const getCode = async () => {
+  console.log(getAuthUrl());
+
+  const code = await readline.question("Code: ");
+  try {
+    await getAccessTokens(code);
+  } catch (error) {
+    if (!axios.isAxiosError(error)) return;
+    console.log(error.response.data);
+    return getCode();
+  }
 }
 
 export const getAccessTokens = async (code: string) => {
@@ -36,11 +68,12 @@ export const refreshTokens = async (refreshToken: string) => {
     refresh_token: refreshToken,
   });
 
+  const tokens = await client.tokens.findFirst();
   await client.tokens.upsert({
     create: response.data,
     update: response.data,
     where: {
-      access_token: response.data.access_token
+      access_token: tokens.access_token
     }
   });
 
