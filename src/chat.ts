@@ -39,7 +39,18 @@ export const start = async () => {
       skipDuplicates: true
     });
 
-    messages = await getMessages(firstMessageId);
+    try {
+      messages = await getMessages(firstMessageId);
+    } catch (error) {
+      await sleep(60000);
+
+      const tokens = await client.tokens.findFirst();
+      if (!tokens) {
+        break;
+      }
+
+      await refreshTokens(tokens.refresh_token);
+    }
     
     await client.updates.upsert({
       create: { last_id: firstMessageId },
