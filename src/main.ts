@@ -1,6 +1,7 @@
 import { refreshTokens } from "./tokens";
+import { connect } from "./chat";
 import { client } from "./prisma";
-import { start } from "./chat";
+import { start } from "./history";
 import axios from "axios";
 
 const tokens = await client.tokens.findFirst();
@@ -11,4 +12,5 @@ if (!tokens) {
   axios.defaults.headers.common["Authorization"] = `Bearer ${tokens.access_token}`;
 
   await start();
+  await connect();
 }

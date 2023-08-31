@@ -1,67 +1,58 @@
 import { Message, User } from "@prisma/client";
-import { refreshTokens } from "./tokens";
 import { client } from "./prisma";
-import { sleep } from "./utils";
-import axios from "axios";
+import Websocket from "ws";
 
-interface Response extends Message {
-  sender: User;
+interface Payload {
+  event: "chat.message.new";
+  data: {
+    messages: Message[];
+    users: User[];
+  };
 }
 
-const getMessages = async (until?: number | BigInt) => {
-  const response = await axios<Response[]>("/chat/channels/1397/messages", {
-    params: {
-      limit: 50,
-      until,
+export const connect = async () => {
+  const tokens = await client.tokens.findFirst();
+  if (!tokens) return;
+
+  const ws = new Websocket("wss://notify.ppy.sh", [], {
+    headers: {
+      Authorization: `Bearer ${tokens.access_token}`,
     },
   });
-  return response.data;
+
+  ws.on("open", () => {
+    ws.send(JSON.stringify({ event: "chat.start" }));
+  });
+  ws.on("message", onMessage);
+  ws.on("error", onMessage);
+
+  return ws;
 };
 
-export const start = async () => {
-  let record = await client.updates.findFirst();
-  let recordLastId = record?.last_id;
+const onMessage = async (buffer: Websocket.RawData) => {
+  const content: Payload = JSON.parse(buffer.toString());
 
-  let messages = await getMessages(recordLastId);
-  let firstMessageId = messages[0].message_id;
+  const trMessages = content.data.messages.filter(
+    (message) => message.channel_id === 1397
+  );
+  const trUsers = content.data.users.filter((user) =>
+    trMessages.some((msg) => msg.sender_id === user.id)
+  );
 
-  while (recordLastId !== firstMessageId) {
-    const { count: userCount } = await client.user.createMany({
-      data: messages.map(message => message.sender),
-      skipDuplicates: true
-    })
-  
-    const { count: messageCount } = await client.message.createMany({
-      data: messages.map(message => {
-        const { sender, ...msg } = message;
-        return msg;
-      }),
-      skipDuplicates: true
-    });
+  await client.user.createMany({
+    data: trUsers,
+    skipDuplicates: true,
+  });
 
-    try {
-      messages = await getMessages(firstMessageId);
-    } catch (error) {
-      await sleep(60000);
+  await client.message.createMany({
+    data: trMessages,
+    skipDuplicates: true,
+  });
 
-      const tokens = await client.tokens.findFirst();
-      if (!tokens) {
-        break;
-      }
-
-      await refreshTokens(tokens.refresh_token);
-    }
-    
-    await client.updates.upsert({
-      create: { last_id: firstMessageId },
-      update: { last_id: firstMessageId },
-      where: { last_id: recordLastId || 0 }
-    });
-
-    recordLastId = firstMessageId;
-    firstMessageId = messages[0].message_id;
-
-    console.log(`Added ${userCount} users. Added ${messageCount} messages. Sleeping for 10 seconds`);
-    await sleep(10_000);
+  let print = '';
+  for (let message of trMessages) {
+    print += `${message.sender_id} ${message.content}`;
   }
-}
+
+  console.log(print);
+};

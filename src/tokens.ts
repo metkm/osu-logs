@@ -17,6 +17,14 @@ export const getAccessTokens = async (code: string) => {
     redirect_uri: process.env.REDIRECT_URI,
   });
 
+  await client.tokens.upsert({
+    create: response.data,
+    update: response.data,
+    where: {
+      access_token: response.data.access_token
+    }
+  });
+
   return response.data;
 };
 
