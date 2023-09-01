@@ -66,7 +66,7 @@ const onMessage = async (buffer: Websocket.RawData) => {
 
   let print = '';
   for (let message of trMessages) {
-    print += `message: ${message.sender_id} ${message.content}`;
+    print += `[message]: ${message.sender_id} ${message.content}`;
   }
 
   console.log(print);
