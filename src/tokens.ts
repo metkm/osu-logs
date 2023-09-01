@@ -78,6 +78,6 @@ export const refreshTokens = async (refreshToken: string) => {
   });
 
   axios.defaults.headers.common["Authorization"] = `Bearer ${response.data.access_token}`;
-
+  console.log("refreshed tokens");
   return response.data;
 };

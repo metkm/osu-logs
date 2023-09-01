@@ -47,6 +47,8 @@ const onMessage = async (buffer: Websocket.RawData) => {
     trMessages.some((msg) => msg.sender_id === user.id)
   );
 
+  if (trMessages.length === 0) return;
+
   await client.user.createMany({
     data: trUsers,
     skipDuplicates: true,

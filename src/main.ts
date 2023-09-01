@@ -18,16 +18,16 @@ const main = async () => {
     } catch {
       await client.tokens.delete({
         where: {
-          access_token: tokens.access_token
-        }
+          access_token: tokens.access_token,
+        },
       });
 
       return main();
     }
   }
-  
-  start();
+
+  // start();
   connect();
-}
+};
 
 main();

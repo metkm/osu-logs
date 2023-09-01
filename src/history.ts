@@ -49,6 +49,7 @@ export const start = async () => {
         break;
       }
 
+      console.log(error);
       await refreshTokens(tokens.refresh_token);
     }
     
