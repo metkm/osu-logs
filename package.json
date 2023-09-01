@@ -6,6 +6,7 @@
     "ws": "^8.13.0"
   },
   "scripts": {
+    "start": "npx tsc && npm run dev",
     "dev": "node ./dist/main.js"
   },
   "devDependencies": {

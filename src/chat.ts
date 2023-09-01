@@ -5,7 +5,7 @@ import axios from "axios";
 
 interface Payload {
   event: "chat.message.new";
-  data: {
+  data?: {
     messages: Message[];
     users: User[];
   };
@@ -42,6 +42,8 @@ export const connect = async () => {
 
 const onMessage = async (buffer: Websocket.RawData) => {
   const content: Payload = JSON.parse(buffer.toString());
+
+  if (!content.data) return;
 
   const trMessages = content.data.messages.filter(
     (message) => message.channel_id === 1397
