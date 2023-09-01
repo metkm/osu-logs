@@ -30,9 +30,12 @@ export const connect = async () => {
 
   ws.on("open", () => {
     ws.send(JSON.stringify({ event: "chat.start" }));
+    console.log("Connected websocket");
   });
   ws.on("message", onMessage);
-  ws.on("error", onMessage);
+  ws.on("error", error => {
+    console.log("Socket error", error);
+  });
 
   return ws;
 };

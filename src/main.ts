@@ -8,7 +8,7 @@ config();
 
 const main = async () => {
   const tokens = await client.tokens.findFirst();
-
+  
   // tokens doesn't exist, so we will create auth url and get the code from the terminal
   if (!tokens) {
     getCode();
@@ -18,11 +18,11 @@ const main = async () => {
     } catch {
       await client.tokens.delete({
         where: {
-          access_token: tokens.access_token,
-        },
+          access_token: tokens.access_token
+        }
       });
 
-      return main();
+      return await main();
     }
   }
 

@@ -32,7 +32,7 @@ export const getCode = async () => {
 
   const code = await readline.question("Code: ");
   try {
-    await getAccessTokens(code);
+    return await getAccessTokens(code);
   } catch (error) {
     if (!axios.isAxiosError(error)) return;
     console.log(error.response.data);
@@ -57,6 +57,8 @@ export const getAccessTokens = async (code: string) => {
     }
   });
 
+  axios.defaults.headers.common["Authorization"] = `Bearer ${response.data.access_token}`;
+  console.log("Got access tokens.");
   return response.data;
 };
 
