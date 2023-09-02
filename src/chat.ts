@@ -14,7 +14,7 @@ interface Payload {
 const resetTimeout = async () => {
   console.log("resetting timeout");
   await axios.post("/chat/ack");
-}
+};
 
 export const connect = async () => {
   const tokens = await client.tokens.findFirst();
@@ -33,8 +33,14 @@ export const connect = async () => {
     console.log("Connected websocket");
   });
   ws.on("message", onMessage);
-  ws.on("error", error => {
+  ws.on("error", (error) => {
     console.log("Socket error", error);
+  });
+  ws.on("close", (code, reason) => {
+    console.log("close", code, reason.toString());
+  });
+  ws.on("unexpected-response", (request, response) => {
+    console.log("unexpected", request, response);
   });
 
   return ws;
@@ -42,14 +48,15 @@ export const connect = async () => {
 
 const onMessage = async (buffer: Websocket.RawData) => {
   const content: Payload = JSON.parse(buffer.toString());
+  console.log(content);
 
   if (!content.data) return;
 
   const trMessages = content.data.messages.filter(
-    (message) => message.channel_id === 1397
+    (message) => message.channel_id === 1397,
   );
   const trUsers = content.data.users.filter((user) =>
-    trMessages.some((msg) => msg.sender_id === user.id)
+    trMessages.some((msg) => msg.sender_id === user.id),
   );
 
   if (trMessages.length === 0) return;
@@ -64,8 +71,8 @@ const onMessage = async (buffer: Websocket.RawData) => {
     skipDuplicates: true,
   });
 
-  let print = '';
-  for (let message of trMessages) {
+  let print = "";
+  for (const message of trMessages) {
     print += `[message]: ${message.sender_id} ${message.content}`;
   }
 

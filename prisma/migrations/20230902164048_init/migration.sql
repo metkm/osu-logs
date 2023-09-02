@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "Type" AS ENUM ('action', 'markdown', 'plain');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" INTEGER NOT NULL,
@@ -19,13 +22,14 @@ CREATE TABLE "User" (
 
 -- CreateTable
 CREATE TABLE "Message" (
-    "message_id" BIGINT NOT NULL,
+    "channel_id" INTEGER NOT NULL,
     "content" TEXT NOT NULL,
     "is_action" BOOLEAN NOT NULL,
-    "channel_id" INTEGER NOT NULL,
-    "timestamp" TIMESTAMP(3) NOT NULL,
-    "type" TEXT NOT NULL,
+    "message_id" BIGINT NOT NULL,
     "sender_id" INTEGER NOT NULL,
+    "timestamp" TIMESTAMP(3) NOT NULL,
+    "type" "Type" NOT NULL,
+    "uuid" TEXT,
 
     CONSTRAINT "Message_pkey" PRIMARY KEY ("message_id")
 );

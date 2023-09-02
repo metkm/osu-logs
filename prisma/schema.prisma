@@ -24,15 +24,24 @@ model User {
   Message         Message[]
 }
 
+enum Type {
+  action
+  markdown
+  plain
+}
+
 model Message {
-  message_id BigInt      @id
+  channel_id Int
   content    String
   is_action  Boolean
-  channel_id Int
-  timestamp  DateTime
-  type       String
-  sender_id  Int
-  sender     User     @relation(fields: [sender_id], references: [id])
+  message_id BigInt  @id
+
+  sender_id Int
+  sender    User @relation(fields: [sender_id], references: [id])
+
+  timestamp DateTime
+  type      Type
+  uuid      String?
 }
 
 model Tokens {

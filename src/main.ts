@@ -10,18 +10,18 @@ config();
 const main = async () => {
   const tokens = await client.tokens.findFirst();
   const argv = await yargs(process.argv).argv;
-  
+
   // tokens doesn't exist, so we will create auth url and get the code from the terminal
   if (!tokens) {
-    getCode();
+    await getCode();
   } else {
     try {
       await refreshTokens(tokens.refresh_token);
     } catch {
       await client.tokens.delete({
         where: {
-          access_token: tokens.access_token
-        }
+          access_token: tokens.access_token,
+        },
       });
 
       return await main();
