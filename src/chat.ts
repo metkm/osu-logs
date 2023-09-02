@@ -31,7 +31,7 @@ export const connect = async () => {
   });
 
   const intervalIdReset = setInterval(resetTimeout, 30_000);
-  const intervalIdRefresh = setInterval(refreshTokens, 20_000);
+  const intervalIdRefresh = setInterval(refreshTokens, 60 * 60 * 12);
 
   ws.on("open", () => {
     ws.send(JSON.stringify({ event: "chat.start" }));
