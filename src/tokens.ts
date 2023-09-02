@@ -1,18 +1,7 @@
+import { readline } from "./utils";
 import { client } from "./prisma";
+import { Tokens } from "./models";
 import axios from "axios";
-
-import { createInterface } from "readline/promises";
-const readline = createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-
-interface Tokens {
-  token_type: "Bearer";
-  expires_in: number;
-  access_token: string;
-  refresh_token: string;
-}
 
 export const getAuthUrl = () => {
   const url = new URL("https://osu.ppy.sh/oauth/authorize");

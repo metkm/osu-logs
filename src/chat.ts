@@ -1,8 +1,10 @@
 import { Message, User } from "@prisma/client";
+import { refreshTokens } from "./tokens";
 import { client } from "./prisma";
 import Websocket from "ws";
 import axios from "axios";
-import { refreshTokens } from "./tokens";
+import { readline } from "./utils";
+import process from "process";
 
 interface Payload {
   event: "chat.message.new";
@@ -42,13 +44,20 @@ export const connect = async () => {
     console.log("Socket error", error);
   });
   ws.on("close", (code, reason) => {
-    console.log("close", code, reason.toString());
+    console.log("Close", code, reason.toString());
 
     clearInterval(intervalIdRefresh);
     clearInterval(intervalIdReset);
   });
-  ws.on("unexpected-response", (request, response) => {
-    console.log("unexpected", request, response);
+
+  readline.on("SIGINT", () => {
+    console.log("Cleanup");
+
+    clearInterval(intervalIdRefresh);
+    clearInterval(intervalIdReset);
+
+    ws.send(JSON.stringify({ event: "chat.end" }));
+    process.exit();
   });
 
   return ws;
