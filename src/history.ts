@@ -8,7 +8,7 @@ interface Response extends Message {
   sender: User;
 }
 
-const getMessages = async (until?: number | BigInt) => {
+const getMessages = async (until?: number | bigint) => {
   const response = await axios<Response[]>("/chat/channels/1397/messages", {
     params: {
       limit: 50,
@@ -19,7 +19,7 @@ const getMessages = async (until?: number | BigInt) => {
 };
 
 export const start = async () => {
-  let record = await client.updates.findFirst();
+  const record = await client.updates.findFirst();
   let recordLastId = record?.last_id;
 
   let messages = await getMessages(recordLastId);
@@ -27,16 +27,16 @@ export const start = async () => {
 
   while (recordLastId !== firstMessageId) {
     const { count: userCount } = await client.user.createMany({
-      data: messages.map(message => message.sender),
-      skipDuplicates: true
-    })
-  
+      data: messages.map((message) => message.sender),
+      skipDuplicates: true,
+    });
+
     const { count: messageCount } = await client.message.createMany({
-      data: messages.map(message => {
-        const { sender, ...msg } = message;
+      data: messages.map((message) => {
+        const { sender, ...msg } = message; // eslint-disable-line @typescript-eslint/no-unused-vars
         return msg;
       }),
-      skipDuplicates: true
+      skipDuplicates: true,
     });
 
     try {
@@ -44,25 +44,22 @@ export const start = async () => {
     } catch (error) {
       await sleep(60000);
 
-      const tokens = await client.tokens.findFirst();
-      if (!tokens) {
-        break;
-      }
-
       console.log(error);
-      await refreshTokens(tokens.refresh_token);
+      await refreshTokens();
     }
-    
+
     await client.updates.upsert({
       create: { last_id: firstMessageId },
       update: { last_id: firstMessageId },
-      where: { last_id: recordLastId || 0 }
+      where: { last_id: recordLastId || 0 },
     });
 
     recordLastId = firstMessageId;
     firstMessageId = messages[0].message_id;
 
-    console.log(`Added ${userCount} users. Added ${messageCount} messages. Sleeping for 10 seconds`);
+    console.log(
+      `Added ${userCount} users. Added ${messageCount} messages. Sleeping for 10 seconds`,
+    );
     await sleep(10_000);
   }
-}
+};

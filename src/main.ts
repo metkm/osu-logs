@@ -37,7 +37,7 @@ const main = async () => {
     await getCode();
   } else {
     try {
-      await refreshTokens(tokens.refresh_token);
+      await refreshTokens();
     } catch {
       await client.tokens.delete({
         where: {
