@@ -32,6 +32,7 @@ const main = async () => {
     console.log("Starting history");
     start();
   }
+
   connect();
 };
 

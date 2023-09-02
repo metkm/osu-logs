@@ -10,14 +10,14 @@
   "scripts": {
     "start": "npx tsc && node ./dist/main.js",
     "dev": "node ./dist/main.js",
-    "prepare": "husky install",
-    "format": "npx prettier",
-    "lint": "npx eslint ."
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@types/node": "^20.5.7",
     "@types/ws": "^8.5.5",
     "@types/yargs": "^17.0.24",
+    "@typescript-eslint/eslint-plugin": "^6.5.0",
+    "@typescript-eslint/parser": "^6.5.0",
     "eslint": "^8.48.0",
     "eslint-config-prettier": "^9.0.0",
     "husky": "^8.0.3",
