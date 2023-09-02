@@ -3,17 +3,25 @@
     "@prisma/client": "^5.2.0",
     "axios": "^1.5.0",
     "dotenv": "^16.3.1",
+    "prettier": "^3.0.3",
     "ws": "^8.13.0",
     "yargs": "^17.7.2"
   },
   "scripts": {
     "start": "npx tsc && node ./dist/main.js",
-    "dev": "node ./dist/main.js"
+    "dev": "node ./dist/main.js",
+    "prepare": "husky install",
+    "format": "npx prettier",
+    "lint": "npx eslint ."
   },
   "devDependencies": {
     "@types/node": "^20.5.7",
     "@types/ws": "^8.5.5",
     "@types/yargs": "^17.0.24",
+    "eslint": "^8.48.0",
+    "eslint-config-prettier": "^9.0.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^14.0.1",
     "prisma": "^5.2.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
