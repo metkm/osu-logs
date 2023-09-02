@@ -27,8 +27,11 @@ export const connect = async () => {
     },
   });
 
-  setInterval(resetTimeout, 30_000);
-  setInterval(() => refreshTokens(tokens.refresh_token), 72_000);
+  const intervalIdReset = setInterval(resetTimeout, 30_000);
+  const intervalIdRefresh = setInterval(
+    () => refreshTokens(tokens.refresh_token),
+    72_000,
+  );
 
   ws.on("open", () => {
     ws.send(JSON.stringify({ event: "chat.start" }));
@@ -40,6 +43,9 @@ export const connect = async () => {
   });
   ws.on("close", (code, reason) => {
     console.log("close", code, reason.toString());
+
+    clearInterval(intervalIdRefresh);
+    clearInterval(intervalIdReset);
   });
   ws.on("unexpected-response", (request, response) => {
     console.log("unexpected", request, response);
