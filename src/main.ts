@@ -33,6 +33,19 @@ const main = async () => {
     start();
   }
 
+  if (argv.reset) {
+    const update = await client.updates.findFirst();
+    if (!update) return;
+
+    await client.updates.delete({
+      where: {
+        last_id: update.last_id,
+      },
+    });
+
+    console.log("Deleted updates");
+  }
+
   connect();
 };
 

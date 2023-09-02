@@ -1,9 +1,10 @@
 import { Message, User } from "@prisma/client";
 import { refreshTokens } from "./tokens";
+import { readline } from "./utils";
 import { client } from "./prisma";
+
 import Websocket from "ws";
 import axios from "axios";
-import { readline } from "./utils";
 import process from "process";
 
 interface Payload {
