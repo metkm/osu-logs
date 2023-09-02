@@ -2,6 +2,7 @@ import { Message, User } from "@prisma/client";
 import { client } from "./prisma";
 import Websocket from "ws";
 import axios from "axios";
+import { refreshTokens } from "./tokens";
 
 interface Payload {
   event: "chat.message.new";
@@ -27,6 +28,7 @@ export const connect = async () => {
   });
 
   setInterval(resetTimeout, 30_000);
+  setInterval(() => refreshTokens(tokens.refresh_token), 72_000);
 
   ws.on("open", () => {
     ws.send(JSON.stringify({ event: "chat.start" }));
