@@ -48,7 +48,6 @@ export const connect = async () => {
 
 const onMessage = async (buffer: Websocket.RawData) => {
   const content: Payload = JSON.parse(buffer.toString());
-  console.log(content);
 
   if (!content.data) return;
 
