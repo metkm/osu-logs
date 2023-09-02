@@ -13,7 +13,7 @@ interface Payload {
 }
 
 const resetTimeout = async () => {
-  console.log("resetting timeout");
+  console.log("Resetting timeout");
   await axios.post("/chat/ack");
 };
 
