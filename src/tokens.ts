@@ -53,15 +53,16 @@ export const getAccessTokens = async (code: string) => {
   return response.data;
 };
 
-export const refreshTokens = async (refreshToken: string) => {
+export const refreshTokens = async () => {
+  const tokens = await client.tokens.findFirst();
+
   const response = await axios.post<Tokens>("https://osu.ppy.sh/oauth/token", {
     client_id: process.env.CLIENT_ID,
     client_secret: process.env.CLIENT_SECRET,
     grant_type: "refresh_token",
-    refresh_token: refreshToken,
+    refresh_token: tokens.refresh_token,
   });
 
-  const tokens = await client.tokens.findFirst();
   await client.tokens.upsert({
     create: response.data,
     update: response.data,
