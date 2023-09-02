@@ -13,7 +13,6 @@ const main = async () => {
 
   if (argv.reset) {
     const update = await client.updates.findFirst();
-    const tokens = await client.tokens.findFirst();
     if (update) {
       await client.updates.delete({
         where: {
@@ -34,7 +33,7 @@ const main = async () => {
   }
 
   // tokens doesn't exist, so we will create auth url and get the code from the terminal
-  if (!tokens) {
+  if (!tokens || argv.reset) {
     await getCode();
   } else {
     try {
