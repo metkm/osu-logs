@@ -32,7 +32,7 @@ export default {
       const toAdd = longest - message.sender.username.length;
       const offset = " ".repeat(toAdd);
 
-      content += `${offset}${message.sender.username}: ${message.content}\n`;
+      content += `${message.message_id} ${offset}${message.sender.username}: ${message.content}\n`;
     }
     content += "```";
 
