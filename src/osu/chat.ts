@@ -1,7 +1,7 @@
 import { Message, User } from "@prisma/client";
 import { refreshTokens } from "./tokens";
-import { readline, sleep } from "./utils";
-import { client } from "./prisma";
+import { readline, sleep } from "../utils";
+import { client } from "../prisma";
 
 import Websocket from "ws";
 import axios from "axios";

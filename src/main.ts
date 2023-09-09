@@ -1,6 +1,6 @@
-import { getCode, refreshTokens } from "./tokens";
-import { startHistory } from "./history";
-import { startWebsocket } from "./chat";
+import { getCode, refreshTokens } from "./osu/tokens";
+import { startHistory } from "./osu/history";
+import { startWebsocket } from "./osu/chat";
 import { client } from "./prisma";
 
 import yargs from "yargs";

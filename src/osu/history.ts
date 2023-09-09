@@ -1,7 +1,7 @@
 import { Message, User } from "@prisma/client";
 import { refreshTokens } from "./tokens";
-import { client } from "./prisma";
-import { sleep } from "./utils";
+import { client } from "../prisma";
+import { sleep } from "../utils";
 import axios from "axios";
 
 interface Response extends Message {

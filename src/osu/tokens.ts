@@ -1,6 +1,6 @@
-import { readline } from "./utils";
-import { client } from "./prisma";
-import { Tokens } from "./models";
+import { readline } from "../utils";
+import { client } from "../prisma";
+import { Tokens } from "../models/tokens";
 import axios from "axios";
 
 export const getAuthUrl = () => {
