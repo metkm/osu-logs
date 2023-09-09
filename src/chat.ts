@@ -1,6 +1,6 @@
 import { Message, User } from "@prisma/client";
 import { refreshTokens } from "./tokens";
-import { readline } from "./utils";
+import { readline, sleep } from "./utils";
 import { client } from "./prisma";
 
 import Websocket from "ws";
@@ -20,7 +20,17 @@ const resetTimeout = async () => {
   await axios.post("/chat/ack");
 };
 
+let disconnected = false;
+
 export const connect = async () => {
+  if (disconnected) {
+    console.log(
+      "Disconnected, waiting for 2 seconds to reconnect and refreshing tokens.",
+    );
+    await refreshTokens();
+    await sleep(2000);
+  }
+
   const tokens = await client.tokens.findFirst();
   if (!tokens) return;
 
@@ -36,6 +46,8 @@ export const connect = async () => {
   ws.on("open", () => {
     ws.send(JSON.stringify({ event: "chat.start" }));
     console.log("Connected websocket");
+
+    disconnected = false;
   });
   ws.on("message", onMessage);
   ws.on("error", (error) => {
@@ -46,6 +58,9 @@ export const connect = async () => {
 
     clearInterval(intervalIdRefresh);
     clearInterval(intervalIdReset);
+
+    disconnected = true;
+    connect();
   });
 
   readline.on("SIGINT", () => {
