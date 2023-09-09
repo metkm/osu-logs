@@ -22,7 +22,7 @@ const resetTimeout = async () => {
 
 let disconnected = false;
 
-export const connect = async () => {
+export const startWebsocket = async () => {
   if (disconnected) {
     console.log(
       "Disconnected, waiting for 2 seconds to reconnect and refreshing tokens.",
@@ -60,7 +60,7 @@ export const connect = async () => {
     clearInterval(intervalIdReset);
 
     disconnected = true;
-    connect();
+    startWebsocket();
   });
 
   readline.on("SIGINT", () => {

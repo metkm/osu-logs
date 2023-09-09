@@ -1,10 +1,11 @@
 import { getCode, refreshTokens } from "./tokens";
-import { connect } from "./chat";
+import { startHistory } from "./history";
+import { startWebsocket } from "./chat";
 import { client } from "./prisma";
-import { start } from "./history";
 
 import yargs from "yargs";
 import { config } from "dotenv";
+import { startDiscordBot } from "./discord";
 config();
 
 const main = async () => {
@@ -51,10 +52,11 @@ const main = async () => {
 
   if (argv.history) {
     console.log("Starting history");
-    start();
+    startHistory();
   }
 
-  connect();
+  startDiscordBot();
+  startWebsocket();
 };
 
 main();

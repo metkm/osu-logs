@@ -18,7 +18,7 @@ const getMessages = async (until?: number | bigint) => {
   return response.data;
 };
 
-export const start = async () => {
+export const startHistory = async () => {
   const record = await client.updates.findFirst();
   let recordLastId = record?.last_id;
 
