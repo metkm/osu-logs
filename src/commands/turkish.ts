@@ -23,11 +23,18 @@ export default {
       },
     });
 
-    let content = "";
+    const longest = Math.max(
+      ...messages.map((message) => message.sender.username.length),
+    );
+
+    let content = "```";
     for (const message of messages.reverse()) {
-      content += `- [${message.sender.username}](<https://osu.ppy.sh/users/${message.sender_id}>) ${message.content}\n`;
+      const toAdd = longest - message.sender.username.length;
+      const offset = " ".repeat(toAdd);
+
+      content += `${offset}${message.sender.username}: ${message.content}\n`;
     }
-    content += "";
+    content += "```";
 
     const buttonUp = new ButtonBuilder()
       .setCustomId("up")
