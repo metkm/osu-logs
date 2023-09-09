@@ -23,6 +23,8 @@ export const start = async () => {
   let recordLastId = record?.last_id;
 
   let messages = await getMessages(recordLastId);
+  if (!messages[0]) return;
+
   let firstMessageId = messages[0].message_id;
 
   while (recordLastId !== firstMessageId) {
