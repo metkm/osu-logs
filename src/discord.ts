@@ -11,18 +11,24 @@ const client = new Client({
   ],
 });
 
-const commandsPath = join(__dirname, "commands");
-const commandFiles = readdirSync(commandsPath).filter((file) =>
-  file.endsWith(".js"),
-);
+const loadCommands = async () => {
+  const commandsPath = join(__dirname, "commands");
+  const commandFiles = readdirSync(commandsPath).filter((file) =>
+    file.endsWith(".js"),
+  );
 
-export const startDiscordBot = async () => {
   const commands = {};
   for (const file of commandFiles) {
     const content = await import(join("file://", commandsPath, file));
     const key = Object.keys(content.default)[0];
     commands[key] = content.default[key];
   }
+
+  return commands;
+};
+
+export const startDiscordBot = async () => {
+  const commands = await loadCommands();
 
   client.on("guildCreate", async (guild) => {
     await rest.put(
