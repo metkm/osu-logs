@@ -23,8 +23,10 @@ export const start = async () => {
   let recordLastId = record?.last_id;
 
   let messages = await getMessages(recordLastId);
-  console.log(messages);
-  if (!messages[0]) return;
+  if (messages.length === 0) {
+    console.log(`No more messages. Length: ${messages.length}`);
+    return;
+  }
 
   let firstMessageId = messages[0].message_id;
 
